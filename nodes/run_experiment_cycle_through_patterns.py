@@ -79,10 +79,15 @@ if __name__ == '__main__':
     
     while number_of_trials_done < number_of_trials:
         # strip fixation
-        LEDArena.run_closed_loop_pattern(5, ypos=0, pattern_name='stripe')
+        
+        pattern_id = 5
+        LEDArena.publish_to_led_panels.publish(command='set_pattern_id', arg1=pattern_id)
+        rospy.sleep(.1)
+        LEDArena.publish_to_led_panels.publish(command='start')
         print 'stripe fixation'
-        publish_pattern_name.publish('stripe_fixation')
-        time.sleep(stripe_fixation_length)
+        rospy.sleep(stripe_fixation_length)
+        LEDArena.publish_to_led_panels.publish(command='stop')
+        
         #
         
         # pattern, with or without odor
@@ -90,10 +95,12 @@ if __name__ == '__main__':
         #publish_to_daq_ssr.publish([0], [ssr_val])
         
         pattern_id, pattern_name = choose_random_pattern(patterns_directory)
-        LEDArena.run_closed_loop_pattern(pattern_id+1, ypos=1, pattern_name='pattern_name')
-        print pattern_name, pattern_id
-        publish_pattern_name.publish(pattern_name)
-        time.sleep(trial_length)
+        LEDArena.publish_to_led_panels.publish(command='set_pattern_id', arg1=pattern_id)
+        rospy.sleep(.1)
+        LEDArena.publish_to_led_panels.publish(command='start')
+        print pattern_id, ' : ', pattern_name
+        rospy.sleep(trial_length)
+        LEDArena.publish_to_led_panels.publish(command='stop')
         
         number_of_trials_done += 1
         
